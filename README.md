@@ -35,7 +35,7 @@ I made this popup was for my consumption, but you are free to use it too!
 
 ## Demo
 
-  [Basic usage](https://quantumjs.github.io/atmospheric-diagnostics/demo/)
+[Basic usage](https://quantumjs.github.io/atmospheric-diagnostics/demo/build)
 
 ## Roadmap
 

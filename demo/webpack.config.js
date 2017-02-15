@@ -1,23 +1,22 @@
 var path = require("path");
 var webpack = require("webpack");
 var WebpackBuildNotifierPlugin = require("webpack-build-notifier");
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+var HtmlWebpackPlugin = require("html-webpack-plugin");
+
 
 const PATHS = {
-  src: path.join(__dirname, './src'),
+  src: __dirname,
   build: path.join(__dirname, './build')
 };
 
 module.exports = {
 
   entry: {
-    "atmospheric-diagnostics": PATHS.src + '/AtmosphericDiagnostics.ts'
+    "app": PATHS.src + '/index.ts'
   },
   output: {
     path: PATHS.build,
     filename: '[name].js',
-    library: 'AtmosphericDiagnostics',
-    libraryTarget: 'umd'
   },
   devtool: "source-map",
   module: {
@@ -25,13 +24,6 @@ module.exports = {
       {
         test: /\.ts$/,
         loader: 'ts-loader'
-      },
-      {
-        test: /\.p?css$/,
-        use: ExtractTextPlugin.extract({
-          fallbackLoader: "style-loader",
-          loader: "css-loader?importLoaders=1,url=false!postcss-loader"
-        })
       }
     ]
   },
@@ -40,10 +32,14 @@ module.exports = {
     extensions: ['.ts', '.js']
   },
   plugins: [
- /*   new WebpackBuildNotifierPlugin({
+/*    new WebpackBuildNotifierPlugin({
       title: "My Project Webpack Build"
     }),*/
-    new ExtractTextPlugin("atmospheric-diagnostics.css"),
-
+    new HtmlWebpackPlugin({
+      title: 'Webpack boilerplate',
+      hash: true,
+      filename: 'index.html',
+      template: 'index.html'
+    })
   ]
 };
