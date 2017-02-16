@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 git checkout master
-npm run build-prod
 
 exists=`git show-ref refs/heads/gh-pages`
 if [ -n "$exists" ]; then

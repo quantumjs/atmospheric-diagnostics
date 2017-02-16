@@ -34,7 +34,7 @@
     "autoprefixer": "^6.5.4",
     "css-loader": "^0.26.1",
     "css-variables": "^0.1.5",
-    "d3": "^4.5.0",
+    "d3": "3.5.17",
     "extract-text-webpack-plugin": "2.0.0-rc.1",
     "html-webpack-plugin": "^2.24.1",
     "nvd3": "^1.8.5",
