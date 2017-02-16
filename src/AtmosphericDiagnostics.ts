@@ -4,7 +4,7 @@ import {Configuration} from "./Configuration";
 import {weatherRequest} from "./api/Weather";
 
 import {addGraph, models, utils} from "nvd3"
-import {select} from "d3"
+import {select, time} from "d3"
 
 /**
  * A AtmosphericDiagnostics component
@@ -28,7 +28,13 @@ export default class AtmosphericDiagnostics implements IAttachableComponent {
 
     document.querySelector('.get-data').addEventListener('click', (event: MouseEvent) => {
       weatherRequest({}).then((result) => {
-        this.renderData(result)
+        this.renderData(
+          [{
+            key: "Humidity",
+
+            values: result["list"]
+          }]
+        )
         console.log(result)
 
       }).catch((err) => {
@@ -63,19 +69,17 @@ export default class AtmosphericDiagnostics implements IAttachableComponent {
           return d.dt
         })    //Specify the data accessors.
         .y(function (d) {
-          return d.rain["3h"]
+          return d.main["humidity"]
         })
         .staggerLabels(true)    //Too many bars and not enough room? Try staggering labels.
-        .tooltips(false)        //Don't show tooltips
         .showValues(true)       //...instead, show the bar value right on top of each bar.
         .options({
           duration: 300,
           useInteractiveGuideline: true
         })
 
-
       select('.weather-map svg')
-        .datum(data.list)
+        .datum(data)
         .call(chart);
 
       utils.windowResize(chart.update);
