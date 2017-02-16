@@ -3,8 +3,14 @@ import './AtmosphericDiagnostics.pcss'
 import {Configuration} from "./Configuration";
 import {weatherRequest} from "./api/Weather";
 
-import {addGraph, models, utils} from "nvd3"
-import {select} from "d3"
+import  "vega-embed"
+import  "vega-lite"
+import  "vega"
+
+declare var vg
+
+/*import {addGraph, models, utils} from "nvd3"
+ import {select} from "d3"*/
 
 /**
  * A AtmosphericDiagnostics component
@@ -28,7 +34,7 @@ export default class AtmosphericDiagnostics implements IAttachableComponent {
 
     document.querySelector('.get-data').addEventListener('click', (event: MouseEvent) => {
       weatherRequest({}).then((result) => {
-        this.renderData(result)
+        this.renderData(result["list"])
         console.log(result)
 
       }).catch((err) => {
@@ -57,31 +63,37 @@ export default class AtmosphericDiagnostics implements IAttachableComponent {
   }
 
   renderData(data) {
-    addGraph(function () {
-      var chart = models.discreteBarChart()
-        .x(function (d) {
-          return d.dt
-        })    //Specify the data accessors.
-        .y(function (d) {
-          return d.rain["3h"]
-        })
-        .staggerLabels(true)    //Too many bars and not enough room? Try staggering labels.
-        .tooltips(false)        //Don't show tooltips
-        .showValues(true)       //...instead, show the bar value right on top of each bar.
-        .options({
-          duration: 300,
-          useInteractiveGuideline: true
-        })
 
+    // Assign the specification to a local variable vlSpec.
+    var vlSpec = {
+      "data": {
+        "values": data
+      },
+      "mark": "bar",
+      "encoding": {
+        "y": {"field": "rain.3h", "type": "quantitative"},
+        "x": {
+           "field": "dt_txt", "type": "nominal",
+          "axis": {
+            "title": "Average of b"
+          }
+        }
+      }
+    };
 
-      select('.weather-map svg')
-        .datum(data.list)
-        .call(chart);
+    var embedSpec = {
+      mode: "vega-lite",  // Instruct Vega-Embed to use the Vega-Lite compiler
+      spec: vlSpec
+      // You can add more vega-embed configuration properties here.
+      // See https://github.com/vega/vega/wiki/Embed-Vega-Web-Components#configuration-propeties for more information.
+    };
 
-      utils.windowResize(chart.update);
-
-      return chart;
+    // Embed the visualization in the container with id `vis`
+    vg.embed("svg", embedSpec, function(error, result) {
+      // Callback receiving the View instance and parsed Vega spec
+      // result.view is the View, which resides under the '#vis' element
     });
+
   }
 }
 
