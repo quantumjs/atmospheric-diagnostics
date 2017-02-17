@@ -24,6 +24,9 @@ module.exports = {
       {
         test: /\.ts$/,
         loader: 'ts-loader'
+      }, {
+        test: /\.css$/,
+        loader: 'style-loader!css-loader'
       }
     ]
   },
@@ -32,9 +35,9 @@ module.exports = {
     extensions: ['.ts', '.js']
   },
   plugins: [
-/*    new WebpackBuildNotifierPlugin({
-      title: "My Project Webpack Build"
-    }),*/
+    /*    new WebpackBuildNotifierPlugin({
+     title: "My Project Webpack Build"
+     }),*/
     new HtmlWebpackPlugin({
       title: 'Webpack boilerplate',
       hash: true,
