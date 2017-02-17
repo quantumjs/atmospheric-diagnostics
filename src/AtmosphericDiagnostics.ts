@@ -27,11 +27,16 @@ export default class AtmosphericDiagnostics implements IAttachableComponent {
   addListeners() {
 
     document.querySelector('.get-data').addEventListener('click', (event: MouseEvent) => {
-      weatherRequest({}).then((result) => {
-        this.renderData(
+      weatherRequest((<HTMLInputElement> document.querySelector('input[name="location"]')).value).then((result) => {
+        this.renderHumidity(
           [{
             key: "Humidity",
-
+            values: result["list"]
+          }]
+        )
+        this.renderPressure(
+          [{
+            key: "Pressure",
             values: result["list"]
           }]
         )
@@ -48,9 +53,12 @@ export default class AtmosphericDiagnostics implements IAttachableComponent {
 
      <div class="weather-controls">
         <button class="get-data">Get weather report</button>
-        <input type="text" required placeholder="City name" value="london">
+        <input type="text" required placeholder="City name" value="london" name="location">
       </div>
-     <div class="weather-map">
+     <div class="weather-humidity">
+           <svg></svg>
+     </div>
+     <div class="weather-pressure">
            <svg></svg>
      </div>
 
@@ -62,30 +70,66 @@ export default class AtmosphericDiagnostics implements IAttachableComponent {
   detach() {
   }
 
-  renderData(data) {
+  renderHumidity(data) {
     addGraph(function () {
-      var chart = models.discreteBarChart()
+      var chart = models.lineChart()
         .x(function (d) {
-          return d.dt
+          return d.dt * 1000
         })    //Specify the data accessors.
         .y(function (d) {
           return d.main["humidity"]
         })
-        .staggerLabels(true)    //Too many bars and not enough room? Try staggering labels.
-        .showValues(true)       //...instead, show the bar value right on top of each bar.
         .options({
           duration: 300,
           useInteractiveGuideline: true
         })
 
-      select('.weather-map svg')
+      select('.weather-humidity svg')
         .datum(data)
         .call(chart);
 
-      utils.windowResize(chart.update);
 
+      chart.xAxis.rotateLabels(30)
+        .showMaxMin(true)
+        .tickFormat(function (d) {
+          var f = time.format('%d-%m-%y')(new Date(d));
+          return f.toUpperCase();
+        }).ticks(7)
+      chart.update()
+      utils.windowResize(chart.update);
       return chart;
     });
+
+  }
+
+  renderPressure(data) {
+    addGraph(function () {
+      var chart = models.lineChart()
+        .x(function (d) {
+          return d.dt * 1000
+        })    //Specify the data accessors.
+        .y(function (d) {
+          return d.main["pressure"]
+        })
+        .options({
+          duration: 300,
+          useInteractiveGuideline: true
+        })
+
+      select('.weather-pressure svg')
+        .datum(data)
+        .call(chart);
+
+      chart.xAxis.rotateLabels(30)
+        .showMaxMin(true)
+        .tickFormat(function (d) {
+          var f = time.format('%d-%m-%y')(new Date(d));
+          return f.toUpperCase();
+        }).ticks(7)
+      chart.update()
+      utils.windowResize(chart.update);
+      return chart;
+    })
   }
 }
 
